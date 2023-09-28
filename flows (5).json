@@ -1,0 +1,423 @@
+[
+    {
+        "id": "b71c5858b153af80",
+        "type": "tab",
+        "label": "ARSensor ",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "843ab5768fc392fe",
+        "type": "http response",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 890,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "d32d81d71296ca49",
+        "type": "template",
+        "z": "b71c5858b153af80",
+        "name": "A-Frame",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n  <head>\n    <script src=\"https://aframe.io/releases/1.0.4/aframe.min.js\"></script>\n    <script src=\"https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js\"></script>\n    <script>\n        const timer = 60000    // reload interval time: millisecond(ms) , 1minuts = 60000ms\n        window.addEventListener('load',function(){\n        setInterval('location.reload()',timer);\n        });\n    </script>\n  </head>\n  <body>\n    <a-scene embedded arjs>\n    <a-marker preset=\"hiro\">\n      <a-text value=\"{{payload.text1}}\" position=\"0 0.1 0\" color=\"{{payload.level1}}\" tabsize=\"10\"></a-text>\n    </a-marker>\n    <a-entity camera></a-entity>\n    </a-scene>\n  </body>\n</html>",
+        "output": "str",
+        "x": 740,
+        "y": 360,
+        "wires": [
+            [
+                "843ab5768fc392fe"
+            ]
+        ]
+    },
+    {
+        "id": "c18c8df74de56d1d",
+        "type": "switch",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "23",
+                "vt": "num"
+            },
+            {
+                "t": "lt",
+                "v": "23",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 50,
+        "y": 400,
+        "wires": [
+            [
+                "edd1f26381044958"
+            ],
+            [
+                "d56c153130cf1ae9"
+            ]
+        ]
+    },
+    {
+        "id": "337dd2989e8a27fa",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Get Flow variable",
+        "func": "var score = flow.get(\"temp\");\nmsg.payload = score;\nnode.log(score);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "c18c8df74de56d1d"
+            ]
+        ]
+    },
+    {
+        "id": "b1d09fd158beecd1",
+        "type": "http in",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "url": "/aframe",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "337dd2989e8a27fa"
+            ]
+        ]
+    },
+    {
+        "id": "b292c3aa23629bd6",
+        "type": "change",
+        "z": "b71c5858b153af80",
+        "name": "Insert Sensor data to Flow  variable",
+        "rules": [
+            {
+                "t": "set",
+                "p": "temp",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 80,
+        "wires": [
+            [
+                "a41dded8c46ebb15"
+            ]
+        ]
+    },
+    {
+        "id": "46439e50db0b096b",
+        "type": "debug",
+        "z": "b71c5858b153af80",
+        "name": "Debug: Flow Variable",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "a41dded8c46ebb15",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Flow variable",
+        "func": "var score =flow.get(\"temp\");\nmsg.payload = score;\nnode.log(score);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 80,
+        "wires": [
+            [
+                "46439e50db0b096b"
+            ]
+        ]
+    },
+    {
+        "id": "b9366bb7a1589a23",
+        "type": "comment",
+        "z": "b71c5858b153af80",
+        "name": "Get Sensor data",
+        "info": "",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "a4aea44489597a66",
+        "type": "comment",
+        "z": "b71c5858b153af80",
+        "name": "Generate AR",
+        "info": "",
+        "x": 150,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "d07926b088c4d644",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Set Collor : over 23 degrees Celsius",
+        "func": "\nvar color1 = \"#ffd700\";\nvar value1 = \"Warm\";\nmsg.payload = {\n    level1: color1,\n    text1: value1\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 380,
+        "wires": [
+            [
+                "d32d81d71296ca49"
+            ]
+        ]
+    },
+    {
+        "id": "93a55f39f4d8f9f0",
+        "type": "debug",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 220,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "5b88b245764c28b0",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Set Collor : over 30 degrees Celsius",
+        "func": "\nvar color1 = \"#d9614c\";\nvar value1 = \"Hot\";\nmsg.payload = {\n    level1: color1,\n    text1: value1\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 320,
+        "wires": [
+            [
+                "d32d81d71296ca49"
+            ]
+        ]
+    },
+    {
+        "id": "edd1f26381044958",
+        "type": "switch",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "30",
+                "vt": "num"
+            },
+            {
+                "t": "lt",
+                "v": "30",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 170,
+        "y": 360,
+        "wires": [
+            [
+                "5b88b245764c28b0"
+            ],
+            [
+                "d07926b088c4d644"
+            ]
+        ]
+    },
+    {
+        "id": "d56c153130cf1ae9",
+        "type": "switch",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "16",
+                "vt": "num"
+            },
+            {
+                "t": "lt",
+                "v": "16",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 170,
+        "y": 440,
+        "wires": [
+            [
+                "4fc36ac0966706c5"
+            ],
+            [
+                "d01502eb6365d020"
+            ]
+        ]
+    },
+    {
+        "id": "4fc36ac0966706c5",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Set Collor : under 23 degrees Celsius",
+        "func": "\nvar color1 = \"#7cfc00\";\nvar value1 = \"cool\";\nmsg.payload = {\n    level1: color1, \n    text1: value1\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "d32d81d71296ca49"
+            ]
+        ]
+    },
+    {
+        "id": "d01502eb6365d020",
+        "type": "function",
+        "z": "b71c5858b153af80",
+        "name": "Set Collor : under 16 degrees Celsius",
+        "func": "\nvar color1 = \"#1e90ff\";\nvar value1 = \"cold\";\nmsg.payload = {\n    level1: color1, \n    text1: value1\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 500,
+        "wires": [
+            [
+                "d32d81d71296ca49"
+            ]
+        ]
+    },
+    {
+        "id": "cad3e50616a19c26",
+        "type": "aedes broker",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "mqtt_port": 1883,
+        "mqtt_ws_bind": "port",
+        "mqtt_ws_port": "",
+        "mqtt_ws_path": "",
+        "cert": "",
+        "key": "",
+        "certname": "",
+        "keyname": "",
+        "persistence_bind": "memory",
+        "dburl": "",
+        "usetls": false,
+        "x": 90,
+        "y": 80,
+        "wires": [
+            [
+                "93a55f39f4d8f9f0"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "aa5277105c84439b",
+        "type": "mqtt in",
+        "z": "b71c5858b153af80",
+        "name": "",
+        "topic": "Sub",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "df76e5708e66cf98",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 390,
+        "y": 140,
+        "wires": [
+            [
+                "b292c3aa23629bd6"
+            ]
+        ]
+    },
+    {
+        "id": "df76e5708e66cf98",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    }
+]
